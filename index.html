@@ -5,938 +5,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>一年级成长打卡表</title>
-    <style>
-        body {
-            font-family: 'Microsoft YaHei', sans-serif;
-            line-height: 1.6;
-            margin: 0;
-            padding: 10px;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            color: #333;
-            min-height: 100vh;
-        }
-
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
-            padding: 20px;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            border: 3px solid #ffd166;
-            position: relative;
-        }
-
-        h1 {
-            color: #ff6b6b;
-            text-align: center;
-            margin-bottom: 30px;
-            font-size: 2.5em;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-            background: linear-gradient(45deg, #ff6b6b, #ffd166);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        h2 {
-            color: #06d6a0;
-            border-bottom: 3px solid #ffd166;
-            padding-bottom: 8px;
-            margin-top: 40px;
-            font-size: 1.8em;
-            position: relative;
-        }
-
-        h2::before {
-            content: "🌟 ";
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        th,
-        td {
-            border: 2px solid #ffd166;
-            padding: 12px;
-            text-align: left;
-        }
-
-        th {
-            background: linear-gradient(45deg, #06d6a0, #118ab2);
-            color: white;
-            font-weight: bold;
-            text-align: center;
-            font-size: 1.1em;
-        }
-
-        th::before {
-            content: "✨ ";
-        }
-
-        td {
-            background-color: rgba(255, 255, 255, 0.9);
-        }
-
-        tr:nth-child(even) td {
-            background-color: #f8f9fa;
-        }
-
-        .note {
-            font-size: 0.9em;
-            color: #6c757d;
-            margin: 10px 0;
-        }
-
-        .rule {
-            background: linear-gradient(135deg, #a8e6cf 0%, #dcedc1 100%);
-            padding: 20px;
-            border-radius: 15px;
-            margin: 20px 0;
-            border-left: 5px solid #ffd166;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .rule h3 {
-            color: #ff6b6b;
-            margin-top: 0;
-        }
-
-        .rule h3::before {
-            content: "📝 ";
-        }
-
-        .highlight {
-            color: #ef476f;
-            font-weight: bold;
-            background-color: #ffd166;
-            padding: 2px 6px;
-            border-radius: 5px;
-        }
-
-        input[type="number"] {
-            border: 2px solid #06d6a0;
-            border-radius: 8px;
-            padding: 5px;
-            font-size: 1em;
-            background-color: #f8f9fa;
-        }
-
-        input[type="checkbox"] {
-            transform: scale(1.5);
-            accent-color: #06d6a0;
-        }
-
-        .daily-table th {
-            background: linear-gradient(45deg, #ff6b6b, #ff9e7d);
-        }
-
-        .challenge-table th {
-            background: linear-gradient(45deg, #118ab2, #06d6a0);
-        }
-
-        .score-table th {
-            background: linear-gradient(45deg, #ffd166, #ff9e7d);
-        }
-
-        .reward-table th {
-            background: linear-gradient(45deg, #a663cc, #6f2dbd);
-        }
-
-        .daily-table th::before {
-            content: "📋 ";
-        }
-
-        .challenge-table th::before {
-            content: "🏅 ";
-        }
-
-        .score-table th::before {
-            content: "🧮 ";
-        }
-
-        .reward-table th::before {
-            content: "🎁 ";
-        }
-
-        /* 日常任务优化样式 */
-        .task-score-input {
-            width: 60px;
-            border: 2px solid #06d6a0;
-            border-radius: 8px;
-            padding: 5px;
-            font-size: 1em;
-            background-color: #f8f9fa;
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-
-        .task-score-input:focus {
-            border-color: #ff6b6b;
-            box-shadow: 0 0 8px rgba(255, 107, 107, 0.3);
-            transform: scale(1.05);
-        }
-
-        .task-score-input.filled {
-            background-color: #e8f5e8;
-            border-color: #06d6a0;
-        }
-
-        .task-status {
-            display: inline-block;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            margin-right: 5px;
-            cursor: pointer;
-            border: 2px solid #ddd;
-            text-align: center;
-            line-height: 26px;
-            font-size: 12px;
-            font-weight: bold;
-            color: white;
-            transition: all 0.3s ease;
-            /* 移动端触摸优化 */
-            -webkit-tap-highlight-color: transparent;
-            touch-action: manipulation;
-            user-select: none;
-        }
-
-        .task-status.selected {
-            width: 40px;
-            height: 40px;
-            line-height: 36px;
-            font-size: 14px;
-            transform: scale(1.1);
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
-            z-index: 10;
-            position: relative;
-            animation: bounce 0.5s ease;
-        }
-
-        @keyframes bounce {
-
-            0%,
-            20%,
-            60%,
-            100% {
-                transform: scale(1.1) translateY(0);
-            }
-
-            40% {
-                transform: scale(1.1) translateY(-10px);
-            }
-
-            80% {
-                transform: scale(1.1) translateY(-5px);
-            }
-        }
-
-        /* 成功选择的闪烁效果 */
-        .task-status.selected.done {
-            animation: successPulse 1s ease;
-        }
-
-        @keyframes successPulse {
-            0% {
-                box-shadow: 0 0 15px rgba(6, 214, 160, 0.3);
-            }
-
-            50% {
-                box-shadow: 0 0 25px rgba(6, 214, 160, 0.8);
-            }
-
-            100% {
-                box-shadow: 0 0 15px rgba(6, 214, 160, 0.3);
-            }
-        }
-
-        .task-status.done {
-            background-color: #06d6a0;
-            border-color: #06d6a0;
-        }
-
-        .task-status.not-done {
-            background-color: #ff6b6b;
-            border-color: #ff6b6b;
-        }
-
-        .task-status.neutral {
-            background-color: #ffd166;
-            border-color: #ffd166;
-        }
-
-        .task-row:hover {
-            background-color: #f0f8ff !important;
-            transform: translateX(5px);
-            transition: all 0.3s ease;
-        }
-
-        .score-hint {
-            font-size: 0.8em;
-            color: #6c757d;
-            margin-top: 3px;
-        }
-
-        /* 悬浮分数计算器 */
-        .floating-calculator {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
-            border-radius: 20px;
-            padding: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            border: 3px solid #ffd166;
-            z-index: 1000;
-            min-width: 200px;
-            transition: all 0.3s ease;
-        }
-
-        .floating-calculator.collapsed {
-            width: 60px;
-            height: 60px;
-            padding: 15px;
-            border-radius: 50%;
-            cursor: pointer;
-        }
-
-        .floating-calculator.collapsed .calculator-content {
-            display: none;
-        }
-
-        .floating-calculator.collapsed .toggle-btn {
-            font-size: 24px;
-            text-align: center;
-            line-height: 30px;
-        }
-
-        .calculator-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
-        .calculator-title {
-            font-weight: bold;
-            color: #ff6b6b;
-            font-size: 1.1em;
-        }
-
-        .toggle-btn {
-            background: none;
-            border: none;
-            font-size: 18px;
-            cursor: pointer;
-            color: #06d6a0;
-            padding: 5px;
-            border-radius: 50%;
-            transition: all 0.3s ease;
-        }
-
-        .toggle-btn:hover {
-            background-color: #f0f8ff;
-            transform: scale(1.1);
-        }
-
-        .score-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 8px;
-            padding: 5px 10px;
-            border-radius: 10px;
-            background-color: rgba(255, 255, 255, 0.7);
-        }
-
-        .score-label {
-            font-size: 0.9em;
-            color: #333;
-        }
-
-        .score-value {
-            font-weight: bold;
-            color: #06d6a0;
-            font-size: 1.1em;
-        }
-
-        .total-score {
-            border-top: 2px solid #ffd166;
-            padding-top: 10px;
-            margin-top: 10px;
-        }
-
-        .total-score .score-value {
-            color: #ff6b6b;
-            font-size: 1.3em;
-        }
-
-        /* 移动端优化 */
-        @media (max-width: 768px) {
-            body {
-                padding: 5px;
-            }
-
-            .container {
-                padding: 15px;
-                border-radius: 15px;
-                border-width: 2px;
-            }
-
-            h1 {
-                font-size: 1.8em;
-                margin-bottom: 20px;
-            }
-
-            h2 {
-                font-size: 1.4em;
-                margin-top: 25px;
-            }
-
-            table {
-                font-size: 0.9em;
-            }
-
-            th,
-            td {
-                padding: 10px 8px;
-                border-width: 1px;
-                vertical-align: middle;
-            }
-
-            /* 移动端状态圈容器优化 */
-            td:last-child {
-                padding: 12px 8px;
-                line-height: 1.2;
-            }
-
-            .task-status {
-                width: 35px;
-                height: 35px;
-                line-height: 31px;
-                font-size: 11px;
-                margin-right: 4px;
-                margin-bottom: 4px;
-                /* 增加触摸区域 */
-                min-width: 44px;
-                min-height: 44px;
-                display: inline-flex;
-                align-items: center;
-                justify-content: center;
-            }
-
-            .task-status.selected {
-                width: 42px;
-                height: 42px;
-                line-height: 38px;
-                font-size: 13px;
-                min-width: 48px;
-                min-height: 48px;
-            }
-
-            .score-hint {
-                font-size: 0.7em;
-            }
-
-            .floating-calculator {
-                bottom: 10px;
-                right: 10px;
-                padding: 15px;
-                min-width: 180px;
-            }
-
-            .floating-calculator.collapsed {
-                width: 50px;
-                height: 50px;
-                padding: 10px;
-            }
-
-            .floating-calculator.collapsed .toggle-btn {
-                font-size: 20px;
-                line-height: 30px;
-            }
-
-            .rule {
-                padding: 15px;
-                margin: 15px 0;
-            }
-
-            .reward-table,
-            .challenge-table {
-                font-size: 0.85em;
-            }
-        }
-
-        @media (max-width: 480px) {
-            h1 {
-                font-size: 1.5em;
-            }
-
-            h2 {
-                font-size: 1.2em;
-            }
-
-            table {
-                font-size: 0.8em;
-            }
-
-            th,
-            td {
-                padding: 6px 4px;
-            }
-
-            .task-status {
-                width: 32px;
-                height: 32px;
-                line-height: 28px;
-                font-size: 10px;
-                margin-right: 3px;
-                margin-bottom: 3px;
-                /* 确保触摸区域足够大 */
-                min-width: 44px;
-                min-height: 44px;
-                display: inline-flex;
-                align-items: center;
-                justify-content: center;
-            }
-
-            .task-status.selected {
-                width: 38px;
-                height: 38px;
-                line-height: 34px;
-                font-size: 12px;
-                min-width: 48px;
-                min-height: 48px;
-            }
-
-            .floating-calculator {
-                min-width: 160px;
-                padding: 12px;
-            }
-
-            .floating-calculator.collapsed {
-                width: 45px;
-                height: 45px;
-                padding: 8px;
-            }
-
-            .score-item {
-                margin-bottom: 6px;
-                padding: 4px 8px;
-            }
-
-            .calculator-title {
-                font-size: 1em;
-            }
-        }
-
-        /* 确认按钮样式 */
-        .confirm-section {
-            text-align: center;
-            margin: 30px 0;
-            padding: 20px;
-            background: linear-gradient(135deg, #a8e6cf 0%, #dcedc1 100%);
-            border-radius: 15px;
-            border-left: 5px solid #ffd166;
-        }
-
-        .confirm-btn {
-            background: linear-gradient(45deg, #ff6b6b, #ffd166);
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            font-size: 1.2em;
-            font-weight: bold;
-            border-radius: 25px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);
-            font-family: 'Microsoft YaHei', sans-serif;
-        }
-
-        .confirm-btn:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(255, 107, 107, 0.4);
-        }
-
-        .confirm-btn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            box-shadow: none;
-            opacity: 0.6;
-        }
-
-        .confirm-btn:active:not(:disabled) {
-            transform: translateY(0);
-        }
-
-        /* 奖励弹窗样式 */
-        .reward-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 2000;
-        }
-
-        .reward-modal.show {
-            display: flex;
-        }
-
-        .reward-content {
-            background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
-            padding: 30px;
-            border-radius: 20px;
-            max-width: 400px;
-            width: 90%;
-            text-align: center;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-            border: 3px solid #ffd166;
-            animation: modalSlideIn 0.3s ease-out;
-        }
-
-        @keyframes modalSlideIn {
-            from {
-                transform: translateY(-50px);
-                opacity: 0;
-            }
-
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-
-        .reward-title {
-            font-size: 1.5em;
-            color: #ff6b6b;
-            margin-bottom: 20px;
-            font-weight: bold;
-        }
-
-        .reward-score {
-            font-size: 1.8em;
-            color: #06d6a0;
-            margin: 15px 0;
-            font-weight: bold;
-        }
-
-        .reward-message {
-            font-size: 1.1em;
-            color: #333;
-            margin: 15px 0;
-            line-height: 1.5;
-        }
-
-        .reward-available {
-            background: linear-gradient(135deg, #a8e6cf 0%, #dcedc1 100%);
-            padding: 15px;
-            border-radius: 10px;
-            margin: 15px 0;
-            border-left: 4px solid #06d6a0;
-        }
-
-        .reward-next {
-            background: linear-gradient(135deg, #ffd166 0%, #ff9e7d 100%);
-            padding: 15px;
-            border-radius: 10px;
-            margin: 15px 0;
-            border-left: 4px solid #ff6b6b;
-        }
-
-        .close-btn {
-            background: #06d6a0;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 15px;
-            cursor: pointer;
-            font-size: 1em;
-            margin-top: 20px;
-            transition: all 0.3s ease;
-        }
-
-        .close-btn:hover {
-            background: #05c494;
-            transform: translateY(-1px);
-        }
-
-        /* 横屏优化 */
-        @media (max-height: 600px) and (orientation: landscape) {
-            .floating-calculator {
-                bottom: 5px;
-                right: 5px;
-                padding: 10px;
-                min-width: 150px;
-            }
-
-            .floating-calculator.collapsed {
-                width: 40px;
-                height: 40px;
-                padding: 6px;
-            }
-
-            .reward-content {
-                padding: 20px;
-                max-height: 90vh;
-                overflow-y: auto;
-            }
-        }
-
-        /* 帮助卡片样式 */
-        .help-card {
-            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
-            border-radius: 15px;
-            padding: 20px;
-            margin: 20px 0;
-            border-left: 5px solid #2196f3;
-            box-shadow: 0 5px 15px rgba(33, 150, 243, 0.2);
-            display: none;
-        }
-
-        .help-card.show {
-            display: block;
-            animation: slideDown 0.3s ease;
-        }
-
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .help-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
-        .help-title {
-            font-size: 1.2em;
-            font-weight: bold;
-            color: #1976d2;
-        }
-
-        .help-close {
-            background: none;
-            border: none;
-            font-size: 1.5em;
-            cursor: pointer;
-            color: #666;
-            padding: 0;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .help-close:hover {
-            background-color: rgba(0, 0, 0, 0.1);
-        }
-
-        .help-step {
-            display: flex;
-            align-items: center;
-            margin-bottom: 15px;
-            padding: 10px;
-            background: rgba(255, 255, 255, 0.7);
-            border-radius: 10px;
-        }
-
-        .step-number {
-            background: #2196f3;
-            color: white;
-            width: 25px;
-            height: 25px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            margin-right: 15px;
-            flex-shrink: 0;
-        }
-
-        .step-text {
-            flex: 1;
-            font-size: 1em;
-            color: #333;
-        }
-
-        .step-demo {
-            margin-left: 10px;
-        }
-
-        .demo-status {
-            display: inline-block;
-            width: 25px;
-            height: 25px;
-            border-radius: 50%;
-            margin-right: 5px;
-            text-align: center;
-            line-height: 21px;
-            font-size: 10px;
-            font-weight: bold;
-            color: white;
-            border: 2px solid #ddd;
-        }
-
-        .demo-status.done {
-            background-color: #06d6a0;
-            border-color: #06d6a0;
-        }
-
-        .demo-status.neutral {
-            background-color: #ffd166;
-            border-color: #ffd166;
-        }
-
-        .demo-status.not-done {
-            background-color: #ff6b6b;
-            border-color: #ff6b6b;
-        }
-
-        .help-toggle {
-            background: linear-gradient(45deg, #2196f3, #64b5f6);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 0.9em;
-            margin-bottom: 20px;
-            transition: all 0.3s ease;
-        }
-
-        .help-toggle:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(33, 150, 243, 0.3);
-        }
-
-        /* 进度条样式 */
-        .progress-section {
-            background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
-            border-radius: 15px;
-            padding: 20px;
-            margin: 20px 0;
-            border-left: 5px solid #ff9800;
-        }
-
-        .progress-title {
-            font-size: 1.1em;
-            font-weight: bold;
-            color: #f57c00;
-            margin-bottom: 15px;
-        }
-
-        .progress-bar {
-            background-color: #e0e0e0;
-            border-radius: 10px;
-            height: 20px;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .progress-fill {
-            background: linear-gradient(45deg, #ff9800, #ffc107);
-            height: 100%;
-            border-radius: 10px;
-            transition: width 0.5s ease;
-            position: relative;
-        }
-
-        .progress-text {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 0.8em;
-            font-weight: bold;
-            color: #333;
-            z-index: 1;
-        }
-
-        /* 移动端弹窗优化 */
-        @media (max-width: 768px) {
-            .confirm-section {
-                margin: 20px 0;
-                padding: 15px;
-            }
-
-            .confirm-btn {
-                padding: 12px 25px;
-                font-size: 1.1em;
-            }
-
-            .reward-content {
-                padding: 20px;
-                margin: 10px;
-            }
-
-            .reward-title {
-                font-size: 1.3em;
-            }
-
-            .reward-score {
-                font-size: 1.5em;
-            }
-
-            .reward-message {
-                font-size: 1em;
-            }
-
-            .help-card {
-                padding: 15px;
-                margin: 15px 0;
-            }
-
-            .help-step {
-                flex-direction: column;
-                align-items: flex-start;
-                text-align: left;
-            }
-
-            .step-number {
-                margin-bottom: 5px;
-                margin-right: 0;
-            }
-
-            .step-demo {
-                margin-left: 0;
-                margin-top: 5px;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
     <div class="container">
         <h1>🎉 丢丢小朋友每日成长打卡表 🎉</h1>
-        <p><strong>🌈 我的每日成长足迹 🌈</strong><br>
-            📅 今天：<span id="currentMonth"></span>月<span id="currentDay"></span>日</p>
-        <p><strong>⭐ 我有多少分</strong>：<input type="number" min="0" max="1000" id="myScore" style="width: 80px;"
-                placeholder="0">分</p>
+        <div class="date-highlight">
+            <div class="date-main">
+                📅 <span id="currentYear"></span>年<span id="currentMonth"></span>月<span id="currentDay"></span>日
+            </div>
+            <div class="date-weekday" id="currentWeekday"></div>
+            <div class="date-subtitle">🌈 我的每日成长足迹 🌈</div>
+        </div>
+
 
         <!-- 操作提示卡片 -->
         <div class="help-card" id="helpCard">
@@ -967,304 +49,87 @@
 
         <button class="help-toggle" onclick="toggleHelpCard()">❓ 使用帮助</button>
 
+        <!-- 固定分数统计区域 -->
+        <div class="fixed-score-section">
+            <div class="score-summary">
+                <div class="score-item-fixed">
+                    <span class="score-label-fixed">今天总分</span>
+                    <span class="score-value-fixed" id="todayTotalFixed">0.0</span>
+                </div>
+                <div class="score-item-fixed">
+                    <span class="score-label-fixed">挑战加分</span>
+                    <span class="score-value-fixed" id="challengeTotalFixed">0</span>
+                </div>
+                <div class="score-item-fixed total-score-fixed">
+                    <span class="score-label-fixed">我的积分</span>
+                    <span class="score-value-fixed" id="myScoreFixed">0.0</span>
+                </div>
+            </div>
+
+            <!-- 进度显示 -->
+            <div class="progress-section-fixed">
+                <div class="progress-title-fixed">📈 今日完成进度</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                    <div class="progress-text" id="progressText">0/17 个任务</div>
+                </div>
+            </div>
+
+
+
+            <!-- 确认按钮 -->
+            <div class="confirm-section-fixed">
+                <button class="confirm-btn-fixed" id="confirmBtnFixed" disabled onclick="showRewardModal()">
+                    🌟 确认今日分数 🌟
+                </button>
+            </div>
+        </div>
+
         <h2>📝 日常任务</h2>
         <table class="daily-table">
-            <tr>
-                <th>分类</th>
-                <th>小任务</th>
-                <th>得分怎么算</th>
-                <th>我得几分</th>
-            </tr>
-            <tr class="task-row">
-                <td rowspan="6">自己的事</td>
-                <td>👕 自己穿衣服</td>
-                <td>✅做对加1分，❌没做减1分<br><span class="score-hint">（点击状态圈快速设置）</span></td>
-                <td>
-                    <span class="task-status done" data-score="1" title="做对加1分">+1</span>
-                    <span class="task-status neutral" data-score="0" title="没做错填0分">0</span>
-                    <span class="task-status not-done" data-score="-1" title="没做减1分">-1</span>
-                </td>
-            </tr>
-            <tr class="task-row">
-                <td>🦷 早上自己刷牙（刷干净）</td>
-                <td>✅做对加1分，❌没做减1分<br><span class="score-hint">（点击状态圈快速设置）</span></td>
-                <td>
-                    <span class="task-status done" data-score="1" title="做对加1分">+1</span>
-                    <span class="task-status neutral" data-score="0" title="没做错填0分">0</span>
-                    <span class="task-status not-done" data-score="-1" title="没做减1分">-1</span>
-                </td>
-            </tr>
-            <tr class="task-row">
-                <td>🦷 晚上自己刷牙（刷干净）</td>
-                <td>✅做对加1分，❌没做减1分<br><span class="score-hint">（点击状态圈快速设置）</span></td>
-                <td>
-                    <span class="task-status done" data-score="1" title="做对加1分">+1</span>
-                    <span class="task-status neutral" data-score="0" title="没做错填0分">0</span>
-                    <span class="task-status not-done" data-score="-1" title="没做减1分">-1</span>
-                </td>
-            </tr>
-            <tr class="task-row">
-                <td>🎒 自己收书包</td>
-                <td>✅做对加1分，❌没做减1分<br><span class="score-hint">（点击状态圈快速设置）</span></td>
-                <td>
-                    <span class="task-status done" data-score="1" title="做对加1分">+1</span>
-                    <span class="task-status neutral" data-score="0" title="没做错填0分">0</span>
-                    <span class="task-status not-done" data-score="-1" title="没做减1分">-1</span>
-                </td>
-            </tr>
-            <tr class="task-row">
-                <td>🛏️ 按时睡觉（周一～周五10点前）</td>
-                <td>✅做对加1分，❌晚睡减1分<br><span class="score-hint">（点击状态圈快速设置）</span></td>
-                <td>
-                    <span class="task-status done" data-score="1" title="做对加1分">+1</span>
-                    <span class="task-status neutral" data-score="0" title="没做错填0分">0</span>
-                    <span class="task-status not-done" data-score="-1" title="没做减1分">-1</span>
-                </td>
-            </tr>
-            <tr class="task-row">
-                <td>⏰ 按时起床（周一～周五7点15）</td>
-                <td>✅做对加1分，❌赖床减1分<br><span class="score-hint">（点击状态圈快速设置）</span></td>
-                <td>
-                    <span class="task-status done" data-score="1" title="做对加1分">+1</span>
-                    <span class="task-status neutral" data-score="0" title="没做错填0分">0</span>
-                    <span class="task-status not-done" data-score="-1" title="没做减1分">-1</span>
-                </td>
-            </tr>
-            <tr>
-                <td rowspan="5">好好吃饭</td>
-                <td>🍳 早餐按时吃完</td>
-                <td>15分钟内吃完加3分，20分钟内加2分，30分钟内加1分。认真吃完不扣分，不认真扣1分。<br><span class="score-hint">（点击状态圈快速设置）</span></td>
-                <td>
-                    <span class="task-status done" data-score="3" title="15分钟内加3分">+3</span>
-                    <span class="task-status done" data-score="2" title="20分钟内加2分">+2</span>
-                    <span class="task-status done" data-score="1" title="30分钟内加1分">+1</span>
-                    <span class="task-status neutral" data-score="0" title="认真吃完不扣分">0</span>
-                    <span class="task-status not-done" data-score="-1" title="不认真扣1分">-1</span>
-                </td>
-            </tr>
-            <tr class="task-row">
-                <td>🍱 午餐按时吃完</td>
-                <td>20分钟内吃完加3分，30分钟内加2分，40分钟内加1分。认真吃完不扣分，不认真扣1分。<br><span class="score-hint">（点击状态圈快速设置）</span></td>
-                <td>
-                    <span class="task-status done" data-score="3" title="20分钟内加3分">+3</span>
-                    <span class="task-status done" data-score="2" title="30分钟内加2分">+2</span>
-                    <span class="task-status done" data-score="1" title="40分钟内加1分">+1</span>
-                    <span class="task-status neutral" data-score="0" title="认真吃完不扣分">0</span>
-                    <span class="task-status not-done" data-score="-1" title="不认真扣1分">-1</span>
-                </td>
-            </tr>
-            <tr class="task-row">
-                <td>🍽️ 晚餐按时吃完</td>
-                <td>20分钟内吃完加3分，30分钟内加2分，40分钟内加1分。认真吃完不扣分，不认真扣1分。<br><span class="score-hint">（点击状态圈快速设置）</span></td>
-                <td>
-                    <span class="task-status done" data-score="3" title="20分钟内加3分">+3</span>
-                    <span class="task-status done" data-score="2" title="30分钟内加2分">+2</span>
-                    <span class="task-status done" data-score="1" title="40分钟内加1分">+1</span>
-                    <span class="task-status neutral" data-score="0" title="认真吃完不扣分">0</span>
-                    <span class="task-status not-done" data-score="-1" title="不认真扣1分">-1</span>
-                </td>
-            </tr>
-            <tr class="task-row">
-                <td>🍴 三餐认真吃不拖拉</td>
-                <td>✅每餐做到加1分，任一餐拖拉减1分<br><span class="score-hint">（点击状态圈快速设置）</span></td>
-                <td>
-                    <span class="task-status done" data-score="3" title="三餐都做到加3分">+3</span>
-                    <span class="task-status done" data-score="2" title="两餐做到加2分">+2</span>
-                    <span class="task-status done" data-score="1" title="一餐做到加1分">+1</span>
-                    <span class="task-status neutral" data-score="0" title="正常完成不扣分">0</span>
-                    <span class="task-status not-done" data-score="-1" title="任一餐拖拉减1分">-1</span>
-                </td>
-            </tr>
-            <tr class="task-row">
-                <td>🍎 尝试新食物</td>
-                <td>✅当天尝试1种新食物加2分，没尝试不扣分<br><span class="score-hint">（点击状态圈快速设置）</span></td>
-                <td>
-                    <span class="task-status done" data-score="2" title="尝试新食物加2分">+2</span>
-                    <span class="task-status neutral" data-score="0" title="没尝试不扣分">0</span>
-                </td>
-            </tr>
-            <tr class="task-row">
-                <td rowspan="4">学习的事</td>
-                <td>📚 认真写作业</td>
-                <td>✅做对加1分<br><span class="score-hint">（点击状态圈快速设置）</span></td>
-                <td>
-                    <span class="task-status done" data-score="1" title="做对加1分">+1</span>
-                    <span class="task-status neutral" data-score="0" title="正常完成不扣分">0</span>
-                </td>
-            </tr>
-            <tr class="task-row">
-                <td>📖 读15分钟绘本</td>
-                <td>✅做对加1分<br><span class="score-hint">（点击状态圈快速设置）</span></td>
-                <td>
-                    <span class="task-status done" data-score="1" title="做对加1分">+1</span>
-                    <span class="task-status neutral" data-score="0" title="正常完成不扣分">0</span>
-                </td>
-            </tr>
-            <tr class="task-row">
-                <td>🔤 分享新学生字</td>
-                <td>✅1个字加0.5分，每日上限2分<br><span class="score-hint">（点击状态圈快速设置）</span></td>
-                <td>
-                    <span class="task-status done" data-score="2" title="4个字以上加2分">+2</span>
-                    <span class="task-status done" data-score="1" title="2个字加1分">+1</span>
-                    <span class="task-status done" data-score="0.5" title="1个字加0.5分">+0.5</span>
-                    <span class="task-status neutral" data-score="0" title="没分享不扣分">0</span>
-                </td>
-            </tr>
-            <tr class="task-row">
-                <td>🔠 分享新学单词</td>
-                <td>✅1个单词加0.5分，每日上限2分<br><span class="score-hint">（点击状态圈快速设置）</span></td>
-                <td>
-                    <span class="task-status done" data-score="2" title="4个单词以上加2分">+2</span>
-                    <span class="task-status done" data-score="1" title="2个单词加1分">+1</span>
-                    <span class="task-status done" data-score="0.5" title="1个单词加0.5分">+0.5</span>
-                    <span class="task-status neutral" data-score="0" title="没分享不扣分">0</span>
-                </td>
-            </tr>
-            <tr class="task-row">
-                <td>帮忙做事</td>
-                <td>🧹 扫地、擦桌子、收房间</td>
-                <td>✅做对加1分<br><span class="score-hint">（点击状态圈快速设置）</span></td>
-                <td>
-                    <span class="task-status done" data-score="1" title="做对加1分">+1</span>
-                    <span class="task-status neutral" data-score="0" title="正常完成不扣分">0</span>
-                    <span class="task-status not-done" data-score="-1" title="没做好减1分">-1</span>
-
-                </td>
-            </tr>
-            <tr class="task-row">
-                <td>不发脾气</td>
-                <td>😊 不摔东西不大哭</td>
-                <td>❌发脾气减3分<br><span class="score-hint">（点击状态圈快速设置）</span></td>
-                <td>
-                    <span class="task-status neutral" data-score="0" title="没发脾气不扣分">0</span>
-                    <span class="task-status not-done" data-score="-3" title="发脾气减3分">-3</span>
-                </td>
-            </tr>
+            <thead>
+                <tr>
+                    <th>分类</th>
+                    <th>小任务</th>
+                    <th>得分怎么算</th>
+                    <th>我得几分</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- 任务内容将通过JavaScript动态生成 -->
+            </tbody>
         </table>
 
         <h2>🏆 挑战任务</h2>
         <table class="challenge-table">
-            <tr>
-                <th>挑战内容</th>
-                <th>完成要求</th>
-                <th>是否完成（打✅）</th>
-                <th>加分记录</th>
-            </tr>
-            <tr>
-                <td>和爸妈一起爬一座山</td>
-                <td>选不太高的山（如公园小山、郊野短路线），坚持登顶</td>
-                <td><input type="checkbox" class="challenge-checkbox" data-points="15"></td>
-                <td>+15分</td>
-            </tr>
-            <tr>
-                <td>熟练掌握一项小技能</td>
-                <td>比如连续跳绳10个、拼好1个复杂积木、学会系鞋带等</td>
-                <td><input type="checkbox" class="challenge-checkbox" data-points="20"></td>
-                <td>+20分</td>
-            </tr>
-            <tr>
-                <td>读完一本完整的图画书</td>
-                <td>能简单复述书中主要内容（比如主角做了什么）</td>
-                <td><input type="checkbox" class="challenge-checkbox" data-points="20"></td>
-                <td>+20分</td>
-            </tr>
-            <tr>
-                <td>独立完成一幅创意画</td>
-                <td>自己构思主题（如"我的家""太空旅行"），不用爸妈帮忙画</td>
-                <td><input type="checkbox" class="challenge-checkbox" data-points="20"></td>
-                <td>+20分</td>
-            </tr>
+            <thead>
+                <tr>
+                    <th>挑战内容</th>
+                    <th>完成要求</th>
+                    <th>是否完成（打✅）</th>
+                    <th>加分记录</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- 挑战任务内容将通过JavaScript动态生成 -->
+            </tbody>
         </table>
 
-        <h2>🧮 分数计算</h2>
-        <table class="score-table">
-            <tr>
-                <th>计算项目</th>
-                <th>计算方式</th>
-                <th>得分</th>
-            </tr>
-            <tr>
-                <td>今天总分</td>
-                <td>把"我得几分"都加起来</td>
-                <td id="todayTotal">0</td>
-            </tr>
-            <tr>
-                <td>挑战任务加分</td>
-                <td>挑战任务完成自动计算</td>
-                <td id="challengeTotal">0</td>
-            </tr>
-            <tr>
-                <td>累计总分</td>
-                <td>昨天累计分+今天总分+挑战加分</td>
-                <td id="totalScore">0</td>
-            </tr>
-        </table>
 
-        <!-- 进度显示 -->
-        <div class="progress-section">
-            <div class="progress-title">📈 今日完成进度</div>
-            <div class="progress-bar">
-                <div class="progress-fill" id="progressFill" style="width: 0%"></div>
-                <div class="progress-text" id="progressText">0/17 个任务</div>
-            </div>
-        </div>
-
-        <!-- 确认按钮区域 -->
-        <div class="confirm-section">
-            <h3>🎉 完成今日打卡</h3>
-            <p>点击确认按钮，看看今天的成果和可以兑换的奖励吧！</p>
-            <button class="confirm-btn" id="confirmBtn" disabled onclick="showRewardModal()">
-                🌟 确认今日分数 🌟
-            </button>
-        </div>
 
         <h2>🎁 攒分换奖励</h2>
         <table class="reward-table">
-            <tr>
-                <th>攒够积分</th>
-                <th>奖励内容</th>
-                <th>温馨提示</th>
-            </tr>
-            <tr>
-                <td>10分</td>
-                <td>畅享15分钟动画时光</td>
-                <td>当日即可解锁，快乐即刻开始！</td>
-            </tr>
-            <tr>
-                <td>25分</td>
-                <td>Switch周末畅玩延长30分钟</td>
-                <td>周末游戏时间从1小时升级为1.5小时！</td>
-            </tr>
-            <tr>
-                <td>40分</td>
-                <td>自选饮料+美味小零食</td>
-                <td>挑选最爱的口味，甜蜜加倍！</td>
-            </tr>
-            <tr>
-                <td>50分</td>
-                <td>20元专属玩具大选购</td>
-                <td>把心仪的小宝贝带回家！</td>
-            </tr>
-            <tr>
-                <td>60分</td>
-                <td>玩具店扭蛋惊喜大挑战</td>
-                <td>开启神秘盲盒，收获未知快乐！</td>
-            </tr>
-            <tr>
-                <td>100分</td>
-                <td>50元左右玩具随心选</td>
-                <td>可以选喜欢的积木、玩偶或益智玩具！</td>
-            </tr>
-            <tr>
-                <td>150分</td>
-                <td>周末壹方城机动游戏一次（100个币）</td>
-                <td>能玩喜欢的摇摇车、投篮机，超尽兴！</td>
-            </tr>
-            <tr>
-                <td>200分</td>
-                <td>全新Switch游戏带回家</td>
-                <td>全家共享欢乐，开启游戏新旅程！</td>
-            </tr>
+            <thead>
+                <tr>
+                    <th>攒够积分</th>
+                    <th>奖励内容</th>
+                    <th>温馨提示</th>
+                    <th>兑换操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- 奖励内容将通过JavaScript动态生成 -->
+            </tbody>
         </table>
 
         <div class="rule">
@@ -1280,32 +145,7 @@
         </div>
     </div>
 
-    <!-- 悬浮分数计算器 -->
-    <div class="floating-calculator" id="floatingCalculator">
-        <div class="calculator-header">
-            <span class="calculator-title">📊 分数统计</span>
-            <button class="toggle-btn" onclick="toggleCalculator()">−</button>
-        </div>
-        <div class="calculator-content">
-            <div class="score-item">
-                <span class="score-label">今天总分</span>
-                <span class="score-value" id="floatingTodayTotal">0.0</span>
-            </div>
-            <div class="score-item">
-                <span class="score-label">挑战加分</span>
-                <span class="score-value" id="floatingChallengeTotal">0</span>
-            </div>
-            <div class="score-item">
-                <span class="score-label">我的积分</span>
-                <span class="score-value" id="floatingMyScore">0.0</span>
-            </div>
-            <div class="score-item total-score">
-                <span class="score-label">累计总分</span>
-                <span class="score-value" id="floatingTotalScore">0.0</span>
-            </div>
-        </div>
-        <div class="toggle-btn" style="display: none;">📊</div>
-    </div>
+
 
     <!-- 奖励弹窗 -->
     <div class="reward-modal" id="rewardModal">
@@ -1313,383 +153,103 @@
             <div class="reward-title">🎉 今日成果报告 🎉</div>
             <div class="reward-score" id="modalTodayScore">今天得分：0分</div>
             <div class="reward-score" id="modalTotalScore">累计总分：0分</div>
+            
+            <!-- 今日总结区域 -->
+            <div id="todaySummary" class="today-summary-container"></div>
+            
             <div id="rewardMessage" class="reward-message"></div>
             <button class="close-btn" onclick="closeRewardModal()">知道了 😊</button>
         </div>
     </div>
 
-    <script>
-        // 自动获取当前日期
-        const now = new Date();
-        const month = now.getMonth() + 1; // 月份从0开始，需要+1
-        const day = now.getDate();
+    <!-- 生字填写弹窗 -->
+    <div class="input-modal" id="characterModal">
+        <div class="input-content">
+            <div class="input-title">🔤 分享今天学到的新生字</div>
 
-        document.getElementById('currentMonth').textContent = month;
-        document.getElementById('currentDay').textContent = day;
+            <div class="example-section">
+                <div class="example-title">📚 填写示例：</div>
+                <div class="example-text">
+                    春 花 树 鸟 飞
+                </div>
+            </div>
 
-        // 防抖函数
-        function debounce(func, wait) {
-            let timeout;
-            return function executedFunction(...args) {
-                const later = () => {
-                    clearTimeout(timeout);
-                    func(...args);
-                };
-                clearTimeout(timeout);
-                timeout = setTimeout(later, wait);
-            };
-        }
+            <div class="input-section">
+                <div class="input-label">✏️ 请写下你今天学到的新生字：</div>
+                <textarea class="input-field" id="characterInput"
+                    placeholder="请直接写出学到的生字，用空格分开&#10;比如：春 花 树 鸟 飞"></textarea>
+                <div class="input-hint">
+                    💡 小贴士：直接写出今天学到的生字就可以了，每个字之间用空格分开！
+                </div>
+                <div class="input-counter" id="characterCounter">字数：0 | 得分：0分</div>
+            </div>
 
-        // 自动分数计算功能
-        function calculateScores() {
-            try {
-                // 计算日常任务总分（今天总分）
-                let dailyTotal = 0;
-                const selectedStatuses = document.querySelectorAll('.task-status.selected');
-                selectedStatuses.forEach(status => {
-                    const value = parseFloat(status.dataset.score) || 0;
-                    dailyTotal += value;
-                });
+            <div class="input-buttons">
+                <button class="input-save-btn" onclick="saveCharacters()">💾 保存生字</button>
+                <button class="input-cancel-btn" onclick="closeCharacterModal()">❌ 取消</button>
+            </div>
+        </div>
+    </div>
 
-                // 计算挑战任务加分（从挑战任务表格复选框获取）
-                let challengeTotal = 0;
-                const challengeCheckboxes = document.querySelectorAll('.challenge-checkbox');
-                challengeCheckboxes.forEach(checkbox => {
-                    if (checkbox.checked) {
-                        challengeTotal += parseInt(checkbox.dataset.points);
-                    }
-                });
+    <!-- 单词填写弹窗 -->
+    <div class="input-modal" id="wordModal">
+        <div class="input-content">
+            <div class="input-title">🔠 分享今天学到的新单词</div>
 
-                // 获取"我有多少分"的输入值
-                const myScore = parseFloat(document.getElementById('myScore').value) || 0;
+            <div class="example-section">
+                <div class="example-title">📚 填写示例：</div>
+                <div class="example-text">
+                    apple cat dog book pen
+                </div>
+            </div>
 
-                // 今天总分只包含日常任务分数
-                const todayTotal = dailyTotal;
+            <div class="input-section">
+                <div class="input-label">✏️ 请写下你今天学到的新单词：</div>
+                <textarea class="input-field" id="wordInput"
+                    placeholder="请直接写出学到的单词，用空格分开&#10;比如：apple cat dog book pen"></textarea>
+                <div class="input-hint">
+                    💡 小贴士：直接写出今天学到的单词就可以了，每个单词之间用空格分开！
+                </div>
+                <div class="input-counter" id="wordCounter">字数：0 | 得分：0分</div>
+            </div>
 
-                // 累计总分 = 我有多少分 + 今天总分 + 挑战任务加分
-                const totalScore = myScore + todayTotal + challengeTotal;
+            <div class="input-buttons">
+                <button class="input-save-btn" onclick="saveWords()">💾 保存单词</button>
+                <button class="input-cancel-btn" onclick="closeWordModal()">❌ 取消</button>
+            </div>
+        </div>
+    </div>
 
-                // 更新主表格显示（保留一位小数）
-                const todayTotalEl = document.getElementById('todayTotal');
-                const challengeTotalEl = document.getElementById('challengeTotal');
-                const totalScoreEl = document.getElementById('totalScore');
+    <!-- 帮忙做事填写弹窗 -->
+    <div class="input-modal" id="houseworkModal">
+        <div class="input-content">
+            <div class="input-title">🤝 分享今天帮忙做的事情</div>
 
-                if (todayTotalEl) todayTotalEl.textContent = todayTotal.toFixed(1);
-                if (challengeTotalEl) challengeTotalEl.textContent = challengeTotal;
-                if (totalScoreEl) totalScoreEl.textContent = totalScore.toFixed(1);
+            <div class="example-section">
+                <div class="example-title">📚 填写示例：</div>
+                <div class="example-text">
+                    扫地 擦桌子 收拾房间 洗碗 倒垃圾
+                </div>
+            </div>
 
-                // 更新悬浮计算器显示
-                const floatingElements = {
-                    floatingTodayTotal: todayTotal.toFixed(1),
-                    floatingChallengeTotal: challengeTotal,
-                    floatingMyScore: myScore.toFixed(1),
-                    floatingTotalScore: totalScore.toFixed(1)
-                };
+            <div class="input-section">
+                <div class="input-label">✏️ 请写下你今天帮忙做的事情：</div>
+                <textarea class="input-field" id="houseworkInput"
+                    placeholder="请写出今天帮忙做的事情，用空格分开&#10;比如：扫地 擦桌子 收拾房间 洗碗 倒垃圾"></textarea>
+                <div class="input-hint">
+                    💡 小贴士：写出今天帮忙做的事情，每件事之间用空格分开，每项加1分！
+                </div>
+                <div class="input-counter" id="houseworkCounter">事项数：0 | 得分：0分</div>
+            </div>
 
-                Object.keys(floatingElements).forEach(id => {
-                    const el = document.getElementById(id);
-                    if (el) el.textContent = floatingElements[id];
-                });
+            <div class="input-buttons">
+                <button class="input-save-btn" onclick="saveHousework()">💾 保存记录</button>
+                <button class="input-cancel-btn" onclick="closeHouseworkModal()">❌ 取消</button>
+            </div>
+        </div>
+    </div>
 
-                // 更新确认按钮状态
-                updateConfirmButton();
-
-            } catch (error) {
-                console.error('计算分数时出错:', error);
-            }
-        }
-
-        // 创建防抖版本的计算函数
-        const debouncedCalculateScores = debounce(calculateScores, 100);
-
-        // 奖励数据
-        const rewards = [
-            { points: 10, reward: "畅享15分钟动画时光", description: "当日即可解锁，快乐即刻开始！" },
-            { points: 25, reward: "Switch周末畅玩延长30分钟", description: "周末游戏时间从1小时升级为1.5小时！" },
-            { points: 40, reward: "自选饮料+美味小零食", description: "挑选最爱的口味，甜蜜加倍！" },
-            { points: 50, reward: "20元专属玩具大选购", description: "把心仪的小宝贝带回家！" },
-            { points: 60, reward: "玩具店扭蛋惊喜大挑战", description: "开启神秘盲盒，收获未知快乐！" },
-            { points: 100, reward: "50元左右玩具随心选", description: "可以选喜欢的积木、玩偶或益智玩具！" },
-            { points: 150, reward: "周末壹方城机动游戏一次（100个币）", description: "能玩喜欢的摇摇车、投篮机，超尽兴！" },
-            { points: 200, reward: "全新Switch游戏带回家", description: "全家共享欢乐，开启游戏新旅程！" }
-        ];
-
-        // 更新确认按钮状态
-        function updateConfirmButton() {
-            const confirmBtn = document.getElementById('confirmBtn');
-            const selectedStatuses = document.querySelectorAll('.task-status.selected');
-            let todayTotal = 0;
-
-            selectedStatuses.forEach(status => {
-                const value = parseFloat(status.dataset.score) || 0;
-                todayTotal += value;
-            });
-
-            if (todayTotal > 0) {
-                confirmBtn.disabled = false;
-                confirmBtn.textContent = '🌟 确认今日分数 🌟';
-            } else {
-                confirmBtn.disabled = true;
-                confirmBtn.textContent = '请先完成任务打分';
-            }
-        }
-
-        // 显示奖励弹窗
-        function showRewardModal() {
-            // 计算分数
-            let dailyTotal = 0;
-            const selectedStatuses = document.querySelectorAll('.task-status.selected');
-            selectedStatuses.forEach(status => {
-                const value = parseFloat(status.dataset.score) || 0;
-                dailyTotal += value;
-            });
-
-            let challengeTotal = 0;
-            const challengeCheckboxes = document.querySelectorAll('.challenge-checkbox');
-            challengeCheckboxes.forEach(checkbox => {
-                if (checkbox.checked) {
-                    challengeTotal += parseInt(checkbox.dataset.points);
-                }
-            });
-
-            const myScore = parseFloat(document.getElementById('myScore').value) || 0;
-            const totalScore = myScore + dailyTotal + challengeTotal;
-
-            // 更新弹窗内容
-            document.getElementById('modalTodayScore').textContent = `今天得分：${(dailyTotal + challengeTotal).toFixed(1)}分`;
-            document.getElementById('modalTotalScore').textContent = `累计总分：${totalScore.toFixed(1)}分`;
-
-            // 生成奖励消息
-            const rewardMessage = generateRewardMessage(totalScore);
-            document.getElementById('rewardMessage').innerHTML = rewardMessage;
-
-            // 显示弹窗
-            document.getElementById('rewardModal').classList.add('show');
-        }
-
-        // 生成奖励消息
-        function generateRewardMessage(totalScore) {
-            let message = '';
-            const availableRewards = rewards.filter(r => totalScore >= r.points);
-
-            if (availableRewards.length > 0) {
-                // 有可兑换的奖励
-                const bestReward = availableRewards[availableRewards.length - 1];
-                message += `<div class="reward-available">`;
-                message += `<h4>🎁 恭喜！你可以兑换：</h4>`;
-                message += `<strong>${bestReward.reward}</strong><br>`;
-                message += `<small>${bestReward.description}</small>`;
-                message += `</div>`;
-
-                // 如果还有更高级的奖励
-                const nextReward = rewards.find(r => r.points > totalScore);
-                if (nextReward) {
-                    const needed = nextReward.points - totalScore;
-                    message += `<div class="reward-next">`;
-                    message += `<h4>🌟 继续加油！</h4>`;
-                    message += `再得 <strong>${needed.toFixed(1)}分</strong> 就能解锁：<br>`;
-                    message += `<strong>${nextReward.reward}</strong>`;
-                    message += `</div>`;
-                }
-            } else {
-                // 没有可兑换的奖励
-                const nextReward = rewards[0];
-                const needed = nextReward.points - totalScore;
-                message += `<div class="reward-next">`;
-                message += `<h4>💪 加油努力！</h4>`;
-                message += `再得 <strong>${needed.toFixed(1)}分</strong> 就能获得第一个奖励：<br>`;
-                message += `<strong>${nextReward.reward}</strong><br>`;
-                message += `<small>${nextReward.description}</small>`;
-                message += `</div>`;
-            }
-
-            // 添加鼓励语
-            const encouragements = [
-                "你今天表现得很棒！继续保持哦！ 🌟",
-                "每一分都是你努力的证明！ 💪",
-                "小小的进步，大大的成长！ 🌱",
-                "你是最棒的小朋友！ 🎉",
-                "坚持就是胜利，加油！ 🚀"
-            ];
-            const randomEncouragement = encouragements[Math.floor(Math.random() * encouragements.length)];
-            message += `<p style="margin-top: 20px; color: #ff6b6b; font-weight: bold;">${randomEncouragement}</p>`;
-
-            return message;
-        }
-
-        // 关闭奖励弹窗
-        function closeRewardModal() {
-            document.getElementById('rewardModal').classList.remove('show');
-        }
-
-        // 悬浮计算器切换功能
-        function toggleCalculator() {
-            const calculator = document.getElementById('floatingCalculator');
-            calculator.classList.toggle('collapsed');
-        }
-
-        // 点击收缩状态的计算器展开
-        function expandCalculator() {
-            const calculator = document.getElementById('floatingCalculator');
-            if (calculator.classList.contains('collapsed')) {
-                calculator.classList.remove('collapsed');
-            }
-        }
-
-        // 日常任务状态指示器功能
-        function setupTaskStatusIndicators() {
-            const statusIndicators = document.querySelectorAll('.task-status');
-            statusIndicators.forEach(status => {
-                // 添加触摸事件支持
-                status.addEventListener('touchstart', function (e) {
-                    e.preventDefault(); // 防止双击缩放
-                    this.style.transform = 'scale(0.95)';
-                });
-
-                status.addEventListener('touchend', function (e) {
-                    e.preventDefault();
-                    this.style.transform = '';
-                    handleStatusClick.call(this);
-                });
-
-                status.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    handleStatusClick.call(this);
-                });
-
-                function handleStatusClick() {
-                    // 移除同一行其他状态的选中状态
-                    this.parentElement.querySelectorAll('.task-status').forEach(s => {
-                        s.classList.remove('selected');
-                    });
-
-                    // 添加当前状态的选中状态
-                    this.classList.add('selected');
-
-                    // 播放音效
-                    try {
-                        playSuccessSound();
-                    } catch (e) {
-                        console.log('Audio not available');
-                    }
-
-                    // 更新进度条
-                    if (window.updateProgress) {
-                        updateProgress();
-                    }
-
-                    // 添加视觉反馈
-                    this.style.transform = 'scale(1.1)';
-                    setTimeout(() => {
-                        this.style.transform = '';
-                    }, 200);
-
-                    debouncedCalculateScores();
-                }
-            });
-        }
-
-        // 为所有输入框添加事件监听
-        document.addEventListener('DOMContentLoaded', function () {
-            // 挑战任务复选框
-            const challengeCheckboxes = document.querySelectorAll('.challenge-checkbox');
-            challengeCheckboxes.forEach(checkbox => {
-                checkbox.addEventListener('change', debouncedCalculateScores);
-            });
-
-            // "我有多少分"输入框
-            document.getElementById('myScore').addEventListener('input', debouncedCalculateScores);
-
-            // 设置任务状态指示器
-            setupTaskStatusIndicators();
-
-            // 悬浮计算器点击展开
-            const calculator = document.getElementById('floatingCalculator');
-            calculator.addEventListener('click', function (e) {
-                if (this.classList.contains('collapsed') && e.target === this) {
-                    expandCalculator();
-                }
-            });
-
-            // 初始化计算
-            calculateScores();
-
-            // 移动端优化：自动收缩悬浮计算器
-            if (window.innerWidth <= 768) {
-                setTimeout(() => {
-                    calculator.classList.add('collapsed');
-                }, 3000); // 3秒后自动收缩
-            }
-
-            // 点击弹窗外部关闭
-            document.getElementById('rewardModal').addEventListener('click', function (e) {
-                if (e.target === this) {
-                    closeRewardModal();
-                }
-            });
-
-            // ESC键关闭弹窗
-            document.addEventListener('keydown', function (e) {
-                if (e.key === 'Escape') {
-                    closeRewardModal();
-                }
-            });
-            // 切换帮助卡片
-            window.toggleHelpCard = function () {
-                const helpCard = document.getElementById('helpCard');
-                helpCard.classList.toggle('show');
-            }
-
-            // 更新进度条
-            window.updateProgress = function () {
-                const totalTasks = 17; // 总任务数
-                const completedTasks = document.querySelectorAll('.task-status.selected').length;
-                const progressPercent = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
-
-                document.getElementById('progressFill').style.width = progressPercent + '%';
-                document.getElementById('progressText').textContent = `${completedTasks}/${totalTasks} 个任务`;
-            }
-
-            // 播放成功音效（如果浏览器支持）
-            function playSuccessSound() {
-                try {
-                    // 创建音频上下文
-                    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                    const oscillator = audioContext.createOscillator();
-                    const gainNode = audioContext.createGain();
-
-                    oscillator.connect(gainNode);
-                    gainNode.connect(audioContext.destination);
-
-                    oscillator.frequency.setValueAtTime(523.25, audioContext.currentTime); // C5
-                    oscillator.frequency.setValueAtTime(659.25, audioContext.currentTime + 0.1); // E5
-                    oscillator.frequency.setValueAtTime(783.99, audioContext.currentTime + 0.2); // G5
-
-                    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
-
-                    oscillator.start(audioContext.currentTime);
-                    oscillator.stop(audioContext.currentTime + 0.3);
-                } catch (e) {
-                    // 如果音频不支持，静默失败
-                    console.log('Audio not supported');
-                }
-            }
-
-            // 初始化进度条
-            updateProgress();
-        });
-
-        // 全局函数定义
-        window.toggleHelpCard = function () {
-            const helpCard = document.getElementById('helpCard');
-            helpCard.classList.toggle('show');
-        }
-
-        window.showRewardModal = showRewardModal;
-        window.closeRewardModal = closeRewardModal;
-        window.toggleCalculator = toggleCalculator;
-    </script>
+    <script src="script.js"></script>
 </body>
 
 </html>
