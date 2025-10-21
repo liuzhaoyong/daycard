@@ -224,7 +224,7 @@ const tasks = {
         helping: [
             {
                 id: "housework",
-                name: "� 帮地忙做的事情",
+                name: "🧹帮忙做的事情",
                 description: "✅每项加1分，无上限",
                 type: "input",
                 scorePerItem: 1
@@ -274,6 +274,9 @@ const tasks = {
 let characterData = { content: '', score: 0 };
 let wordData = { content: '', score: 0 };
 let houseworkData = { content: '', score: 0 };
+
+// 存储提交时的任务状态数据
+let submittedTaskData = null;
 
 // 本地积分存储
 function getMyScore() {
@@ -839,6 +842,11 @@ function showRewardModal() {
         return;
     }
 
+    // 保存提交时的任务数据
+    console.log('=== showRewardModal: 开始捕获提交时的任务数据 ===');
+    submittedTaskData = captureCurrentTaskData();
+    console.log('=== showRewardModal: 捕获完成，保存的数据：===', submittedTaskData);
+
     // 计算今天的分数
     let dailyTotal = 0;
     const selectedStatuses = document.querySelectorAll('.task-status.selected');
@@ -985,6 +993,11 @@ function continueWithIncomplete() {
 
 // 直接显示奖励弹窗（跳过完整性检查）
 function showRewardModalDirect() {
+    // 保存提交时的任务数据
+    console.log('=== showRewardModalDirect: 开始捕获提交时的任务数据 ===');
+    submittedTaskData = captureCurrentTaskData();
+    console.log('=== showRewardModalDirect: 捕获完成，保存的数据：===', submittedTaskData);
+
     // 计算今天的分数
     let dailyTotal = 0;
     const selectedStatuses = document.querySelectorAll('.task-status.selected');
@@ -1038,13 +1051,21 @@ function showRewardModalDirect() {
 
 // 生成今日总结
 function generateTodaySummary() {
+    const now = new Date();
+    const dateStr = `${now.getFullYear()}年${now.getMonth() + 1}月${now.getDate()}日`;
+    const weekdays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+    const weekday = weekdays[now.getDay()];
+
     const summary = {
         selfCare: [],
         eating: [],
         learning: [],
         helping: [],
         behavior: [],
-        challenges: []
+        challenges: [],
+        characters: [],
+        words: [],
+        housework: []
     };
 
     // 收集日常任务完成情况
@@ -1064,13 +1085,16 @@ function generateTodaySummary() {
         let score = 0;
 
         if (inputBtn) {
-            // 生字或单词任务
+            // 输入类任务
             if (taskName.includes('生字') && characterData.score > 0) {
                 status = `✅ 已填写 (+${characterData.score}分)`;
                 score = characterData.score;
             } else if (taskName.includes('单词') && wordData.score > 0) {
                 status = `✅ 已填写 (+${wordData.score}分)`;
                 score = wordData.score;
+            } else if (taskName.includes('帮忙') && houseworkData.score > 0) {
+                status = `✅ 已填写 (+${houseworkData.score}分)`;
+                score = houseworkData.score;
             } else {
                 status = '⭕ 未填写';
             }
@@ -1090,6 +1114,8 @@ function generateTodaySummary() {
 
         // 根据分类添加到对应数组
         const taskInfo = { name: taskName, status, score };
+
+        console.log('任务信息:', { taskName, category, status, score });
 
         if (category?.includes('自己的事')) {
             summary.selfCare.push(taskInfo);
@@ -1117,9 +1143,77 @@ function generateTodaySummary() {
         }
     });
 
-    // 生成HTML
-    let summaryHTML = '<div class="today-summary"><h4>📊 今日完成情况</h4>';
+    // 收集生字详细内容
+    if (characterData.content && characterData.content.trim()) {
+        const characters = characterData.content.split(/\s+/).filter(char => char.length > 0);
+        summary.characters = characters;
+    }
 
+    // 收集单词详细内容
+    if (wordData.content && wordData.content.trim()) {
+        const words = wordData.content.split(/\s+/).filter(word => word.length > 0);
+        summary.words = words;
+    }
+
+    // 收集帮忙做事详细内容
+    if (houseworkData.content && houseworkData.content.trim()) {
+        const housework = houseworkData.content.split(/\s+/).filter(item => item.length > 0);
+        summary.housework = housework;
+    }
+
+    // 生成美观的HTML
+    let summaryHTML = `
+        <div class="enhanced-summary">
+            <div class="summary-header">
+                <h3>📊 ${dateStr} ${weekday} 成长总结</h3>
+                <div class="summary-subtitle">🌟 今天又是充实的一天！</div>
+            </div>
+    `;
+
+    // 详细内容展示区域
+    if (summary.characters.length > 0 || summary.words.length > 0 || summary.housework.length > 0) {
+        summaryHTML += `<div class="detailed-content">`;
+
+        // 生字展示
+        if (summary.characters.length > 0) {
+            summaryHTML += `
+                <div class="content-section characters-section">
+                    <h4>📝 今天学到的生字 (${summary.characters.length}个)</h4>
+                    <div class="content-items">
+                        ${summary.characters.map(char => `<span class="content-item character-item">${char}</span>`).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        // 单词展示
+        if (summary.words.length > 0) {
+            summaryHTML += `
+                <div class="content-section words-section">
+                    <h4>🔤 今天学到的单词 (${summary.words.length}个)</h4>
+                    <div class="content-items">
+                        ${summary.words.map(word => `<span class="content-item word-item">${word}</span>`).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        // 帮忙做事展示
+        if (summary.housework.length > 0) {
+            summaryHTML += `
+                <div class="content-section housework-section">
+                    <h4>🤝 今天帮忙做的事 (${summary.housework.length}件)</h4>
+                    <div class="content-items">
+                        ${summary.housework.map(item => `<span class="content-item housework-item">${item}</span>`).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        summaryHTML += `</div>`;
+    }
+
+    // 任务完成情况
     const categories = [
         { key: 'selfCare', title: '🧸 自己的事', items: summary.selfCare },
         { key: 'eating', title: '🍽️ 好好吃饭', items: summary.eating },
@@ -1129,19 +1223,20 @@ function generateTodaySummary() {
         { key: 'challenges', title: '🏆 挑战任务', items: summary.challenges }
     ];
 
+    summaryHTML += `<div class="task-summary">`;
     categories.forEach(category => {
         if (category.items.length > 0) {
-            summaryHTML += `<div class="summary-category">`;
-            summaryHTML += `<h5>${category.title}</h5>`;
-            summaryHTML += `<ul class="summary-list">`;
-
-            category.items.forEach(item => {
-                summaryHTML += `<li class="summary-item">${item.name}: ${item.status}</li>`;
-            });
-
-            summaryHTML += `</ul></div>`;
+            summaryHTML += `
+                <div class="summary-category">
+                    <h5>${category.title}</h5>
+                    <ul class="summary-list">
+                        ${category.items.map(item => `<li class="summary-item">${item.name}: ${item.status}</li>`).join('')}
+                    </ul>
+                </div>
+            `;
         }
     });
+    summaryHTML += `</div>`;
 
     // 计算总分
     const totalDailyScore = [...summary.selfCare, ...summary.eating, ...summary.learning, ...summary.helping, ...summary.behavior]
@@ -1150,17 +1245,246 @@ function generateTodaySummary() {
     const grandTotal = totalDailyScore + totalChallengeScore;
 
     summaryHTML += `
-        <div class="summary-total">
-            <p><strong>📈 今日得分统计：</strong></p>
-            <p>• 日常任务：${totalDailyScore.toFixed(1)}分</p>
-            <p>• 挑战任务：${totalChallengeScore}分</p>
-            <p><strong>• 今日总分：${grandTotal.toFixed(1)}分</strong></p>
+        <div class="summary-stats">
+            <h4>📈 今日得分统计</h4>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <span class="stat-label">日常任务</span>
+                    <span class="stat-value">${totalDailyScore.toFixed(1)}分</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">挑战任务</span>
+                    <span class="stat-value">${totalChallengeScore}分</span>
+                </div>
+                <div class="stat-item total">
+                    <span class="stat-label">今日总分</span>
+                    <span class="stat-value">${grandTotal.toFixed(1)}分</span>
+                </div>
+            </div>
         </div>
     `;
 
-    summaryHTML += '</div>';
+
+
+    summaryHTML += `</div>`;
 
     return summaryHTML;
+}
+
+// 导出今日总结为文本文件
+function exportSummaryToFile() {
+    const now = new Date();
+    const dateStr = `${now.getFullYear()}年${now.getMonth() + 1}月${now.getDate()}日`;
+    const weekdays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+    const weekday = weekdays[now.getDay()];
+
+    let content = `🌟 丢丢小朋友成长记录 🌟\n`;
+    content += `📅 日期：${dateStr} ${weekday}\n`;
+    content += `⏰ 导出时间：${now.toLocaleString()}\n`;
+    content += `${'='.repeat(50)}\n\n`;
+
+    // 详细学习内容
+    if (characterData.content && characterData.content.trim()) {
+        const characters = characterData.content.split(/\s+/).filter(char => char.length > 0);
+        content += `📝 今天学到的生字 (${characters.length}个)：\n`;
+        content += `${characters.join('  ')}\n\n`;
+    }
+
+    if (wordData.content && wordData.content.trim()) {
+        const words = wordData.content.split(/\s+/).filter(word => word.length > 0);
+        content += `🔤 今天学到的单词 (${words.length}个)：\n`;
+        content += `${words.join('  ')}\n\n`;
+    }
+
+    if (houseworkData.content && houseworkData.content.trim()) {
+        const housework = houseworkData.content.split(/\s+/).filter(item => item.length > 0);
+        content += `🤝 今天帮忙做的事 (${housework.length}件)：\n`;
+        content += `${housework.join('  ')}\n\n`;
+    }
+
+    // 任务完成情况
+    content += `📊 任务完成情况：\n`;
+    content += `${'-'.repeat(30)}\n`;
+
+    const categories = [
+        { title: '🧸 自己的事', key: 'selfCare' },
+        { title: '🍽️ 好好吃饭', key: 'eating' },
+        { title: '📚 学习的事', key: 'learning' },
+        { title: '🤝 帮忙做事', key: 'helping' },
+        { title: '😊 不发脾气', key: 'behavior' }
+    ];
+
+    // 收集任务数据
+    const allTaskRows = document.querySelectorAll('.daily-table tbody tr');
+    const tasksByCategory = {
+        '自己的事': [],
+        '好好吃饭': [],
+        '学习的事': [],
+        '帮忙做事': [],
+        '不发脾气': []
+    };
+
+    allTaskRows.forEach(row => {
+        const categoryCell = row.querySelector('td:first-child');
+        const taskCell = row.querySelector('td:nth-child(2)');
+        const selectedStatus = row.querySelector('.task-status.selected');
+        const inputBtn = row.querySelector('.input-btn');
+
+        if (!taskCell) return;
+
+        const taskName = taskCell.textContent.trim();
+        const category = categoryCell?.textContent.trim();
+
+        let status = '';
+        let score = 0;
+
+        if (inputBtn) {
+            if (taskName.includes('生字') && characterData.score > 0) {
+                status = `已填写 (+${characterData.score}分)`;
+                score = characterData.score;
+            } else if (taskName.includes('单词') && wordData.score > 0) {
+                status = `已填写 (+${wordData.score}分)`;
+                score = wordData.score;
+            } else if (taskName.includes('帮忙') && houseworkData.score > 0) {
+                status = `已填写 (+${houseworkData.score}分)`;
+                score = houseworkData.score;
+            } else {
+                status = '未填写';
+            }
+        } else if (selectedStatus) {
+            score = parseFloat(selectedStatus.dataset.score) || 0;
+            const label = selectedStatus.textContent.trim();
+            if (score > 0) {
+                status = `${label} (+${score}分)`;
+            } else if (score === 0) {
+                status = `${label} (${score}分)`;
+            } else {
+                status = `${label} (${score}分)`;
+            }
+        } else {
+            status = '未选择';
+        }
+
+        // 根据分类添加到对应数组
+        const taskInfo = { name: taskName, status, score };
+
+        console.log('导出-任务信息:', { taskName, category, status, score });
+
+        if (category?.includes('自己的事')) {
+            tasksByCategory['自己的事'].push(taskInfo);
+        } else if (category?.includes('好好吃饭')) {
+            tasksByCategory['好好吃饭'].push(taskInfo);
+        } else if (category?.includes('学习的事')) {
+            tasksByCategory['学习的事'].push(taskInfo);
+        } else if (category?.includes('帮忙做事')) {
+            tasksByCategory['帮忙做事'].push(taskInfo);
+        } else if (category?.includes('不发脾气')) {
+            tasksByCategory['不发脾气'].push(taskInfo);
+        }
+    });
+
+    // 输出各类任务
+    const categoryMapping = {
+        '🧸 自己的事': '自己的事',
+        '🍽️ 好好吃饭': '好好吃饭',
+        '📚 学习的事': '学习的事',
+        '🤝 帮忙做事': '帮忙做事',
+        '😊 不发脾气': '不发脾气'
+    };
+
+    categories.forEach(category => {
+        const categoryKey = categoryMapping[category.title];
+        const tasks = tasksByCategory[categoryKey] || [];
+        console.log(`分类: ${category.title}, 键: ${categoryKey}, 任务数: ${tasks.length}`, tasks);
+        if (tasks.length > 0) {
+            content += `\n${category.title}：\n`;
+            tasks.forEach(task => {
+                content += `  • ${task.name}：${task.status}\n`;
+            });
+        }
+    });
+
+    // 如果没有任务，输出调试信息
+    const totalTasks = Object.values(tasksByCategory).reduce((sum, tasks) => sum + tasks.length, 0);
+    console.log('总任务数:', totalTasks);
+    console.log('tasksByCategory:', tasksByCategory);
+
+    // 挑战任务
+    const challengeCheckboxes = document.querySelectorAll('.challenge-checkbox');
+    const challenges = [];
+    challengeCheckboxes.forEach(checkbox => {
+        const row = checkbox.closest('tr');
+        const taskName = row.querySelector('td:nth-child(2)')?.textContent?.trim();
+        const points = parseInt(checkbox.dataset.points) || 0;
+        if (taskName) {
+            const status = checkbox.checked ? `已完成 (+${points}分)` : '未完成';
+            challenges.push({ name: taskName, status, score: checkbox.checked ? points : 0 });
+        }
+    });
+
+    if (challenges.length > 0) {
+        content += `\n🏆 挑战任务：\n`;
+        challenges.forEach(challenge => {
+            content += `  • ${challenge.name}：${challenge.status}\n`;
+        });
+    }
+
+    // 分数统计
+    const dailyTasks = Object.values(tasksByCategory).flat();
+    const totalDailyScore = dailyTasks.reduce((sum, task) => sum + task.score, 0);
+    const totalChallengeScore = challenges.reduce((sum, challenge) => sum + challenge.score, 0);
+    const grandTotal = totalDailyScore + totalChallengeScore;
+
+    content += `\n📈 得分统计：\n`;
+    content += `${'-'.repeat(20)}\n`;
+    content += `日常任务得分：${totalDailyScore.toFixed(1)}分\n`;
+    content += `挑战任务得分：${totalChallengeScore}分\n`;
+    content += `今日总得分：${grandTotal.toFixed(1)}分\n`;
+    content += `当前总积分：${getMyScore()}分\n\n`;
+
+    content += `🌟 今天又是充实的一天！继续加油哦！ 🌟\n`;
+    content += `${'='.repeat(50)}\n`;
+
+    // 创建并下载文件
+    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `丢丢成长记录_${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}.txt`;
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+
+    console.log('今日总结已导出到文件');
+}
+
+// 显示导出成功提示
+function showExportSuccessMessage() {
+    const messageHTML = `
+        <div class="export-success-overlay" id="exportSuccess">
+            <div class="export-success">
+                <div class="success-icon">📄</div>
+                <h3>导出成功！</h3>
+                <p>今日成长记录已保存到本地文件</p>
+                <p class="success-note">🌟 可以分享给家人或保存作纪念哦！</p>
+                <button class="success-close-btn" onclick="closeExportSuccess()">
+                    😊 知道了
+                </button>
+            </div>
+        </div>
+    `;
+
+    document.body.insertAdjacentHTML('beforeend', messageHTML);
+}
+
+// 关闭导出成功提示
+function closeExportSuccess() {
+    const success = document.getElementById('exportSuccess');
+    if (success) {
+        success.remove();
+    }
 }
 
 // 生成奖励消息
@@ -1211,6 +1535,254 @@ function generateRewardMessage(totalScore) {
     message += `<p style="margin-top: 20px; color: #ff6b6b; font-weight: bold;">${randomEncouragement}</p>`;
 
     return message;
+}
+
+// 捕获当前任务数据
+function captureCurrentTaskData() {
+    const taskData = {
+        characterData: { ...characterData },
+        wordData: { ...wordData },
+        houseworkData: { ...houseworkData },
+        tasks: [],
+        challenges: [],
+        timestamp: new Date().toISOString()
+    };
+
+    // 获取所有任务行
+    const taskRows = document.querySelectorAll('.daily-table tbody tr');
+    let rowIndex = 0;
+
+    console.log(`总共找到 ${taskRows.length} 个任务行`);
+
+    // 按顺序遍历配置中的任务，与DOM行一一对应
+    Object.entries(tasks.dailyTasks).forEach(([categoryKey, categoryTasks]) => {
+        const categoryName = getCategoryName(categoryKey);
+        console.log(`处理分类: ${categoryName}, 任务数: ${categoryTasks.length}`);
+
+        categoryTasks.forEach((task, taskIndex) => {
+            let status = '';
+            let score = 0;
+
+            console.log(`处理任务 ${rowIndex}: ${task.name} (分类: ${categoryName})`);
+
+            // 根据任务类型处理
+            if (task.type === 'input') {
+                if (task.id === 'characters' && characterData.score > 0) {
+                    status = `已填写 (+${characterData.score}分)`;
+                    score = characterData.score;
+                } else if (task.id === 'words' && wordData.score > 0) {
+                    status = `已填写 (+${wordData.score}分)`;
+                    score = wordData.score;
+                } else if (task.id === 'housework' && houseworkData.score > 0) {
+                    status = `已填写 (+${houseworkData.score}分)`;
+                    score = houseworkData.score;
+                } else {
+                    status = '未填写';
+                }
+            } else {
+                // 使用行索引精确匹配任务状态
+                if (taskRows[rowIndex]) {
+                    const selectedStatus = taskRows[rowIndex].querySelector('.task-status.selected');
+                    if (selectedStatus) {
+                        score = parseFloat(selectedStatus.dataset.score) || 0;
+                        const label = selectedStatus.textContent.trim();
+                        if (score > 0) {
+                            status = `${label} (+${score}分)`;
+                        } else if (score === 0) {
+                            status = `${label} (${score}分)`;
+                        } else {
+                            status = `${label} (${score}分)`;
+                        }
+                        console.log(`  -> 找到选中状态: ${label}, 分数: ${score}`);
+                    } else {
+                        status = '未选择';
+                        console.log(`  -> 未选择状态`);
+                    }
+                } else {
+                    status = '未找到对应行';
+                    console.log(`  -> 未找到对应的DOM行 (索引: ${rowIndex})`);
+                }
+            }
+
+            taskData.tasks.push({
+                name: task.name,
+                category: categoryName,
+                status,
+                score
+            });
+
+            rowIndex++; // 每处理一个任务，行索引递增
+        });
+    });
+
+    // 收集挑战任务状态
+    if (tasks.challengeTasks) {
+        tasks.challengeTasks.forEach((challenge, index) => {
+            const checkbox = document.querySelector(`input[data-points="${challenge.points}"]`);
+            let status = '未完成';
+            let score = 0;
+
+            if (checkbox && checkbox.checked) {
+                status = `已完成 (+${challenge.points}分)`;
+                score = challenge.points;
+            }
+
+            taskData.challenges.push({
+                name: challenge.name,
+                status,
+                score
+            });
+        });
+    }
+
+    console.log('捕获的任务数据:', taskData);
+    return taskData;
+}
+
+// 使用保存的数据导出
+function exportSummaryFromData(taskData) {
+    const now = new Date();
+    const dateStr = `${now.getFullYear()}年${now.getMonth() + 1}月${now.getDate()}日`;
+    const weekdays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+    const weekday = weekdays[now.getDay()];
+
+    let content = `🌟 丢丢小朋友成长记录 🌟\n`;
+    content += `📅 日期：${dateStr} ${weekday}\n`;
+    content += `⏰ 导出时间：${now.toLocaleString()}\n`;
+    content += `${'='.repeat(50)}\n\n`;
+
+    // 详细学习内容
+    if (taskData.characterData.content && taskData.characterData.content.trim()) {
+        const characters = taskData.characterData.content.split(/\s+/).filter(char => char.length > 0);
+        content += `📝 今天学到的生字 (${characters.length}个)：\n`;
+        content += `${characters.join('  ')}\n\n`;
+    }
+
+    if (taskData.wordData.content && taskData.wordData.content.trim()) {
+        const words = taskData.wordData.content.split(/\s+/).filter(word => word.length > 0);
+        content += `🔤 今天学到的单词 (${words.length}个)：\n`;
+        content += `${words.join('  ')}\n\n`;
+    }
+
+    if (taskData.houseworkData.content && taskData.houseworkData.content.trim()) {
+        const housework = taskData.houseworkData.content.split(/\s+/).filter(item => item.length > 0);
+        content += `🤝 今天帮忙做的事 (${housework.length}件)：\n`;
+        content += `${housework.join('  ')}\n\n`;
+    }
+
+    // 任务完成情况
+    content += `📊 任务完成情况：\n`;
+    content += `${'-'.repeat(30)}\n`;
+
+    const categories = [
+        { title: '🧸 自己的事', key: 'selfCare' },
+        { title: '🍽️ 好好吃饭', key: 'eating' },
+        { title: '📚 学习的事', key: 'learning' },
+        { title: '🤝 帮忙做事', key: 'helping' },
+        { title: '😊 不发脾气', key: 'behavior' }
+    ];
+
+    // 按分类组织任务
+    const tasksByCategory = {
+        '自己的事': [],
+        '好好吃饭': [],
+        '学习的事': [],
+        '帮忙做事': [],
+        '不发脾气': []
+    };
+
+    taskData.tasks.forEach(task => {
+        if (task.category?.includes('自己的事')) {
+            tasksByCategory['自己的事'].push(task);
+        } else if (task.category?.includes('好好吃饭')) {
+            tasksByCategory['好好吃饭'].push(task);
+        } else if (task.category?.includes('学习的事')) {
+            tasksByCategory['学习的事'].push(task);
+        } else if (task.category?.includes('帮忙做事')) {
+            tasksByCategory['帮忙做事'].push(task);
+        } else if (task.category?.includes('不发脾气')) {
+            tasksByCategory['不发脾气'].push(task);
+        }
+    });
+
+    // 输出各类任务
+    const categoryMapping = {
+        '🧸 自己的事': '自己的事',
+        '🍽️ 好好吃饭': '好好吃饭',
+        '📚 学习的事': '学习的事',
+        '🤝 帮忙做事': '帮忙做事',
+        '😊 不发脾气': '不发脾气'
+    };
+
+    categories.forEach(category => {
+        const categoryKey = categoryMapping[category.title];
+        const tasks = tasksByCategory[categoryKey] || [];
+        if (tasks.length > 0) {
+            content += `\n${category.title}：\n`;
+            tasks.forEach(task => {
+                content += `  • ${task.name}：${task.status}\n`;
+            });
+        }
+    });
+
+    // 挑战任务
+    if (taskData.challenges.length > 0) {
+        content += `\n🏆 挑战任务：\n`;
+        taskData.challenges.forEach(challenge => {
+            content += `  • ${challenge.name}：${challenge.status}\n`;
+        });
+    }
+
+    // 分数统计
+    const dailyTasks = taskData.tasks;
+    const totalDailyScore = dailyTasks.reduce((sum, task) => sum + task.score, 0);
+    const totalChallengeScore = taskData.challenges.reduce((sum, challenge) => sum + challenge.score, 0);
+    const grandTotal = totalDailyScore + totalChallengeScore;
+
+    content += `\n📈 得分统计：\n`;
+    content += `${'-'.repeat(20)}\n`;
+    content += `日常任务得分：${totalDailyScore.toFixed(1)}分\n`;
+    content += `挑战任务得分：${totalChallengeScore}分\n`;
+    content += `今日总得分：${grandTotal.toFixed(1)}分\n`;
+    content += `当前总积分：${getMyScore()}分\n\n`;
+
+    content += `🌟 今天又是充实的一天！继续加油哦！ 🌟\n`;
+    content += `${'='.repeat(50)}\n`;
+
+    // 创建并下载文件
+    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `丢丢成长记录_${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}.txt`;
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+
+    console.log('使用保存数据导出完成');
+}
+
+// 导出今日结果并关闭奖励弹窗
+function exportAndCloseRewardModal() {
+    console.log('=== 开始导出，检查保存的数据 ===');
+    console.log('submittedTaskData 是否存在:', !!submittedTaskData);
+    console.log('submittedTaskData 内容:', submittedTaskData);
+
+    // 使用提交时保存的数据导出
+    if (submittedTaskData) {
+        console.log('=== 使用保存的数据导出 ===');
+        exportSummaryFromData(submittedTaskData);
+    } else {
+        console.log('=== 没有保存的数据，使用备用方案 ===');
+        exportSummaryToFile(); // 备用方案
+    }
+
+    // 然后关闭弹窗并清空状态
+    setTimeout(() => {
+        closeRewardModal();
+    }, 500); // 稍微延迟一下，让导出完成
 }
 
 // 关闭奖励弹窗并清空所有已填写状态
